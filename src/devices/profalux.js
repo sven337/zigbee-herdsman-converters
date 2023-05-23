@@ -27,17 +27,20 @@ module.exports = [
         model: 'NSAV061',
         vendor: 'Profalux',
         description: 'Cover',
-        fromZigbee: [fz.cover_position_via_brightness, fz.cover_state_via_onoff],
-        toZigbee: [tz.cover_via_brightness],
+        fromZigbee: [fz.command_cover_close, fz.command_cover_open, fz.command_cover_stop, fz.cover_position_tilt],
+        toZigbee: [tz.cover_state, tz.cover_position_tilt],
         exposes: [e.cover_position().setAccess('state', ea.ALL)],
         configure: async (device, coordinatorEndpoint, logger) => {
-            const endpoint = device.getEndpoint(1);
-            await reporting.bind(endpoint, coordinatorEndpoint, ['genLevelCtrl']);
-            await reporting.brightness(endpoint);
+            const endpoint = device.getEndpoint(2);
+            await reporting.bind(endpoint, coordinatorEndpoint, ['closuresWindowCovering']);
+            await reporting.currentPositionLiftPercentage(endpoint);
         },
+	endpoint: (device) => {
+		return { default: 2};
+	},
     },
     {
-        zigbeeModel: ['MAI-ZTP20F'],
+        zigbeeModel: ['MAI-ZTP20F', 'MAI-ZTP20C'],
         model: 'MAI-ZTP20F',
         vendor: 'Profalux',
         description: 'Cover remote',
